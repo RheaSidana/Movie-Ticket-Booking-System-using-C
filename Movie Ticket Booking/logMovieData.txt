@@ -1,0 +1,16 @@
+102 550 3 3 2021 
+Happy New Year
+Hindi 
+Romantic 
+101 550 4 3 2021 
+Love Aaj Kal 
+Hindi 
+Romantic 
+105 550 3 3 2021 
+Bhool Bhoolaiyan 
+Hindi 
+Mystry 
+109 600 3 3 2021 
+Hey Baby 
+Hindi 
+Comedy 

@@ -1,0 +1,2 @@
+C:\Users\MAX\Desktop\.net\C Project\Movie Ticket Booking\Debug\Movie Ticket Booking.exe
+C:\Users\MAX\Desktop\.net\C Project\Movie Ticket Booking\Debug\Movie Ticket Booking.pdb

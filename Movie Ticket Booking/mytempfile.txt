@@ -1,0 +1,1274 @@
+/* Movie Ticket Booking System */
+#include <conio.h>
+#include <stdio.h>
+#include <string.h>
+#define MAX 100
+
+struct date {
+  int d,m,y;
+};
+struct timings{
+   int h,m;
+};
+
+struct booking{
+  int b_id,u_id,m_id;
+  struct date d;
+  struct timings t;
+  int n,seatno[MAX];
+  int bcost;
+};
+
+struct user{
+  char name[60],email[80],gender;
+  int age,mobileno[10],user_id;
+};
+
+struct movie{
+  int movie_id,movie_price;
+  char language[80],mtype[80],moviename[150];
+  struct date release;
+};
+
+struct movie_seat_status{
+  int m_id,seatm[10][10],count,s_id;
+  struct date d;
+  struct timings t;
+};
+
+/*main functions */
+void admin(); 
+void user();
+void login();
+
+
+/* heading function */
+void heading(int i);
+
+
+/* admin functions : done*/
+void addingM();       //adding movie to the file                                    //done
+void viewM();         //viewing the details of the movie from the file              //done
+void updateM();       //update the details of the movie in the file                 //done
+void deleteM();       //delete the details of the movie from the file               //done
+void viewMTransac();  //view all bookings done for a particular movie               //
+void viewingAllM();   //viewing the details of  all the movies in the file          //done
+void viewAvailM();    //view the details of the movies which are not fully booked   //done 
+
+
+/* user function : done */
+void findM();         //find or view details of a particular movie              //done
+void bookticket();    //ticket booking                                          //  
+void updateBooking(); //update booking                                          //
+void delBooking();    //delete booking                                          //
+void ViewBooking();   //viewing booking                                         //
+void viewAllMovie();  //view the details of all the seat available movies       //done 
+
+
+/*seatmatrix functions : done */
+void seatmat(struct movie_seat_status s);        //display the available seats                          //done
+void initseatmat(struct movie m,int flag);       //initialize the seat matrix                           //done
+void delseat(struct booking b,int seat);         //delete the seat                                      //not needed
+void updateseatmat(struct booking b,int seat);   //book seat                                            //not needed
+void deleteseatmat(int mid);                     //delete the whole seat matrix of a particular movie   //not needed
+
+
+/* misc functions : done */
+void inv();                                 //prints the invalid option                             //done
+void endp();                                //print the exit statement                              //done
+void notfile();                             //print file not found                                  //done
+ int calbookingprice(int seat,int price);   //calculate booking price                               //
+void calb_id(int *id);                      //calculate booking id                                  //
+void caluser_id(int *id);                   //calculate user id                                     //
+void printM(struct movie m);                //print movie details                                   //done
+void printB(struct booking b);              //print booking details                                 //
+void printU(struct user u);                 //print user details                                    //
+ int retCount(int mid);                     //return total seat count available of the movie        //done
+void getu(struct user *ut);                 //writing user details in the file                      //
+void getb(struct booking *bt);              //writing booking data in the file                      //
+int printS(struct movie_seat_status s);     //print the movie seat status and returns count         //
+
+int main(){
+  clrscr();
+  int ch;
+  printf("Enter your choice : \n");
+  printf("1. ADMIN \n");
+  printf("2. USER \n");
+  printf("3. Exit \n");
+  scanf("%d",&ch);
+  printf("\n");
+  switch(ch){
+    case 1: heading(1);
+            login();
+            admin();
+      break;
+    case 2: heading(2);
+            user();
+      break;
+    case 3: endp();exit(0);
+      break;
+    default: inv();
+      break;
+  }
+  getch();
+  return 0;
+}
+
+/*main functions */
+
+void admin(){
+  int ch;
+  char ans;
+  do{
+    clrscr();
+    heading(1);
+    printf("\n\n Enter your choice : \n");
+    printf("1. Add Movie \n ");
+    printf("2. View Movie \n ");
+    printf("3. Update Movie \n ");
+    printf("4. Delete Movie \n ");
+    printf("5. View All Movie \n ");
+    printf("6. View Movie Transactions \n ");
+    printf("7. View All Available Movies  \n ");
+    printf("8. Exit \n ");
+    scanf("%d",&ch);
+    printf("\n");
+    switch (ch){
+      case 1: addingM();
+        break;
+      case 2: clrscr(); heading();viewM();
+        break;
+      case 3: updateM();
+        break;
+      case 4: deleteM();
+        break;
+      case 5: viewingAllM();
+        break;
+      case 6: viewMTranc();
+        break;
+      case 7: clrscr();
+              heading(1);
+              viewAvailM();
+        break;
+      case 8: endp();
+              exit(0);
+        break;
+      default: inv();
+               getch();
+        break;
+    }
+    printf("Do you want to continue: (y/n) ?");
+    scanf("%c",&ans);
+    if(ans=='n' || ans=='N') break;
+  }while(1);
+}
+
+
+void user(){
+  int ch;
+  do{
+    clrscr();
+    heading(2);
+    printf("\n\nEnter your Choice : \n");
+    printf("1. Find Movie \n ");
+    printf("2. Book Movie Tickets \n ");
+    printf("3. Update Movie Booking\n ");
+    printf("4. Delete Movie Booking\n ");
+    printf("5. View Movie Booking\n ");
+    printf("6. View All Available Movie \n ");
+    printf("7. Exit \n ");
+    scanf("%d",&ch);
+    printf("\n");
+    switch(ch){
+      case 1: clrscr();heading(2);findM();
+        break;
+      case 2: bookticket();
+        break;
+      case 3: updateBooking();
+        break;
+      case 4: delBooking();
+        break;
+      case 5:  viewBooking();
+        break;
+      case 6:  clrscr();
+               heading(2);
+               viewAllMovie();
+        break;
+      case 7:  endp(); exit(0);
+        break;
+      default: inv();
+        break;
+    }
+    printf("Do you want to continue: (y/n) ?");
+    scanf("%c",&ans);
+    if(ans=='n' || ans=='N') break;
+  }while(1);
+}
+
+void login(){
+  char pass[10]="admin123";
+  char user[8]="admin";
+  char u[8],pass[10];
+  clrscr();
+  heading(1);
+  printf("\nEnter the Username : ");
+  gets(u);
+  printf("\nEnter the Password : ");
+  gets(p);
+  if(((strcmp(u,user))==0) && (strcmp(p,pass))==0))
+  {
+    printf("Successful Login ");
+  }
+  else {
+    printf("Invalid Password or Username");
+    exit(1);
+  }
+}
+
+/* heading function */
+void heading(int i){
+  if(i==1)
+    printf("MOVIE TICKET BOOKING SYSTEM :admin section");
+  else
+  if(i==2)
+    printf("MOVIE TICKET BOOKING SYSTEM :user section");
+}
+
+/* admin functions */
+void addingM(){
+  clrscr();
+  heading(1);
+  struct movie m;
+  FILE *fpm;
+  fpm=fopen("moviedata.txt","a");
+  if(fpm==NULL) notFile();
+  else{
+    printf("\n Enter Movie Id : ");
+    scanf("%d",&m.movie_id); 
+    printf("\n Enter Movie Name : ");
+    gets(m.movieName);
+    printf("\n Enter Movie Language : ");
+    gets(m.language);
+    printf("\n Enter Movie Type : ");
+    gets(m.type);
+    printf("\n Enter Movie Release date (dd/mm/yyyy) : ");
+    scanf("%d%d%d",&m.release.d,&m.release.m,&m.release.y); 
+    printf("\n Enter Movie Price  : ");
+    scanf("%d",&m.movie_price); 
+    
+    /* entering data in the file */
+    fprintf(fpm,"\n%d %d",m.movie_id,m.movie_price);
+    fprintf(fpm," %d %d %d ",m.release.d,m.release.m,m.release.y);
+    fputs(m.movieName,fpm); fprintf(fpm,"\n");
+    fputs(m.language,fpm);fprintf(fpm,"\n");
+    fputs(m.mtype,fpm);
+  }
+  fclose(fpm);
+  for(int i=0;i<=7;i++){
+    initseatmat(m,i);
+  }
+}
+
+void viewM(){
+  FILE *fpm;
+  fpm=fopen("moviedata.txt","r");
+  struct movie m;
+  char name[150];
+  if(fpm==NULL) notFile();
+  else{
+    printf("Enter the Movie Name you want to view");
+    gets(name);
+    while(!(feof(fpm))){
+      fscanf(fpm,"\n%d %d",&m.movie_id,&m.movie_price);
+      fscanf(fpm," %d %d %d ",&m.release.d,&m.release.m,&m.release.y);
+      fgets(m.movieName,150,fpm);fscanf(fpm,"\n");
+      fgets(m.language,80,fpm);fscanf(fpm,"\n");
+      fgets(m.mtype,80,fpm);
+      
+      if((strcmp(name,m.movieName))==0)
+      {
+        printM(m);
+      }
+    }
+  }
+  fclose(fpm);
+}
+
+void updateM(){
+  clrscr();
+  heading(1);
+  int id,ch;
+  struct movie m,temp;
+  FILE *fpm,*tm;
+  fpm==fopen("moviedata.txt","r");
+  tm=fopen("temp.txt","a");
+  printf("Enter the Movie Id you want to update : \n");
+  scanf("%d",&id);
+  if(fpm==NULL || tm==NULL) notFile();
+  else{
+    while(!(feof(fpm))){
+      fscanf(fpm,"\n%d %d",&m.movie_id,&m.movie_price);
+      fscanf(fpm," %d %d %d ",&m.release.d,&m.release.m,&m.release.y);
+      fgets(m.movieName,150,fpm);fscanf(fpm,"\n");
+      fgets(m.language,80,fpm);fscanf(fpm,"\n");
+      fgets(m.mtype,80,fpm);
+      
+      if(m.movie_id==id){
+        printf("Enter your choice : (MOVIE)\n");
+        printf("1.Name \n2.Language \n3.Type");
+        printf("\n4.Code \n5.Price \n6.Release date"
+        scanf("%d",&ch);
+        switch(ch){
+          case 1: printf("Enter Name :");
+                  gets(temp.movieName);
+                  strcpy(m.movieName,temp.movieName);
+            break;
+          case 2:printf("Enter Language :");
+                  gets(temp.language);
+                  strcpy(m.language,temp.language);
+            break;
+          case 3: printf("Enter Type :");
+                  gets(temp.mtype);
+                  strcpy(m.mtype,temp.mtype);
+            break;
+          case 4:printf("Enter code :");
+                  scanf("%d",&temp.movie_id);
+                  m.movie_id=temp.movie_id;
+            break;
+          case 5: printf("Enter Price  :");
+                  scanf("%d",&temp.movie_price);
+                  m.movie_price=temp.movie_price;
+            break;
+          case 6: printf("Enter Release Date (dd/mm/yy)  :");
+                  scanf("%d%d%d",&temp.release.d,&temp.release.m,&temp.release.y);
+                  m.release.m=temp.relase.m;
+                  m.release.d=temp.relase.d;
+                  m.release.y=temp.relase.y;
+            break;
+          default: inv();
+            break;
+        }
+      }
+      fprintf(tm,"\n%d %d",m.movie_id,m.movie_price);
+      fprintf(tm," %d %d %d ",m.release.d,m.release.m,m.release.y);
+      fputs(m.movieName,tm); fprintf(tm,"\n");
+      fputs(m.language,tm); fprintf(tm,"\n");
+      fputs(m.mtype,tm);
+    }
+  }
+  fclose(fpm);
+  fclose(tm);
+  int r;
+  r=remove("moviedata.txt");
+  r=rename("temp.txt","moviedata.txt");
+}
+
+void deleteM(){
+  clrscr();
+  heading(1);
+  int id;
+  FILE *fpm,*tm;
+  fpm=fopen("moviedata.txt","r");
+  tm=fopen("temp.txt","a");
+  struct movie m;
+  char name[150];
+  if(fpm==NULL || temp==NULL) notFile();
+  else{
+    printf("Enter the Movie Name you want to view");
+    gets(name);
+    while(!(feof(fpm))){
+      fscanf(fpm,"\n%d %d",&m.movie_id,&m.movie_price);
+      fscanf(fpm," %d %d %d ",&m.release.d,&m.release.m,&m.release.y);
+      fgets(m.movieName,150,fpm);fscanf(fpm,"\n");
+      fgets(m.language,80,fpm);fscanf(fpm,"\n");
+      fgets(m.mtype,80,fpm);
+      
+      if((strcmp(name,m.movieName))==0)
+      {
+        printf("Movie Deleted ");
+        id=m.movie_id;
+      }
+      else{
+        fprintf(tm,"\n%d %d",m.movie_id,m.movie_price);
+        fprintf(tm," %d %d %d ",m.release.d,m.release.m,m.release.y);
+        fputs(m.movieName,tm); fprintf(tm,"\n");
+        fputs(m.language,tm); fprintf(tm,"\n");
+        fputs(m.mtype,tm);
+      }
+    }
+  }
+  fclose(fpm);
+  fclose(tm);
+  int r;
+  r=remove("moviedata.txt");
+  r=rename("temp.txt","moviedata.txt");
+  deleteseatmat(id);
+}
+
+void viewMTransac(){
+  clrscr();
+  heading(1);
+  int id,ch;
+  struct booking b;
+  FILE *fpb;
+  fpb==fopen("mbooking.txt","r");
+  //tm=fopen("temp.txt","a");
+  printf("Enter the Movie Id you want to update : \n");
+  scanf("%d",&id);
+  if(fpb==NULL) notFile();
+  else{
+    while(!(feof(fpb))){
+      fscanf(fpb,"\n%d %d %d",&b.b_id,&b.u_id,&b.m_id);
+      fscanf(fpb," %d %d %d",&b.d.d,&b.d.m,&b.d.y);
+      fscanf(fpb," %d %d",&b.t.h,&b.t.m);
+      fscanf(fpb," %d %d",&b.n,&b.bcost);
+      for(int i=0;i<b.n;i++){
+        fscanf(fpb,"%d",&b.seatno[i]);
+      }
+      
+      if(id==b.m_id){
+        printB(b);
+        printf("\n");
+      }
+    }
+  }
+  fclose(fpb);
+}
+
+void viewingAllM(){
+  clrscr();
+  heading(1);
+  struct movie m;
+  printf("\n Printing the Movie Details ");
+  FILE *fpm;
+  fpm=fopen("moviedata.txt","r");
+  if(fpm==NULL) notFile();
+  else{
+    while(!feof(fpm)){
+      fscanf(fpm,"\n%d %d",&m.movie_id,&m.movie_price);
+      fscanf(fpm," %d %d %d ",&m.release.d,&m.release.m,&m.release.y);
+      fgets(m.movieName,150,fpm);fscanf(fpm,"\n");
+      fgets(m.language,80,fpm);fscanf(fpm,"\n");
+      fgets(m.mtype,80,fpm);
+      
+      printM(m);
+    }
+  }
+}
+
+void viewAvailM(){
+  struct movie m;
+  int count,sid;
+  FILE *fpm;
+  fpm=fopen("moviedata.txt","r");
+  if(fpm==NULL) notFile();
+  else{
+    while(!feof(fpm)){
+      fscanf(fpm,"\n%d %d",&m.movie_id,&m.movie_price);
+      fscanf(fpm," %d %d %d ",&m.release.d,&m.release.m,&m.release.y);
+      fgets(m.movieName,150,fpm);fscanf(fpm,"\n");
+      fgets(m.language,80,fpm);fscanf(fpm,"\n");
+      fgets(m.mtype,80,fpm);
+      
+      count=retCount(m.movie_id);
+      if(count!=0){
+        printM();
+        printf("No. of seats available in total");
+      }
+    }
+  }
+  fclose(fpm);
+}
+
+
+/* user function */
+void findM(){
+  viewM();
+}
+
+void bookticket(){
+  clrscr();
+  heading(2);
+  struct booking b;
+  struct movie m;
+  struct user u;
+  char name[150];
+  int count,n,i ;
+  struct date d;
+  struct timings t;
+  struct movie_seat_status s;
+  FILE *fpm;
+  fpm=fopen("moviedata.txt","r");
+  if(fpm==NULL) notFile();
+  else
+  {
+    printf("Enter movie name : ");
+    gets(name);
+    while(!feof(fpm)){
+      fscanf(fpm,"\n%d %d",&m.movie_id,&m.movie_price);
+      fscanf(fpm," %d %d %d ",&m.release.d,&m.release.m,&m.release.y);
+      fgets(m.movieName,150,fpm);fscanf(fpm,"\n");
+      fgets(m.language,80,fpm);fscanf(fpm,"\n");
+      fgets(m.mtype,80,fpm);
+      
+      if((strcmp(m.movieName,name))==0){
+        printf("\nEnter date (dd/mm/yy) ; ");
+        scanf("%d%d%d",&d.d,&d.m,&d.y);
+        printf("\nEnter your choice for timininfgs :");
+        printf("\n1. 12:00 \n2. 4:00 \n3. 8:00");
+        scanf("%d",&ch);
+        switch(ch){
+          case 1:t.h = 12; t.m = 0;
+            break;
+          case 2:t.h = 16; t.m = 0;
+            break;
+          case 3 : t.h = 20; t.m = 0;
+            break;
+          default inv();exit(1);
+        }
+        s.m_id = m.movie_id;
+        s.t = t;
+        s.d = d;
+        count=printS(s);
+        if(count<MAX && count>0){
+          seatmat(s);
+          printf("\nEnter total number of seats you want to book");
+          scanf("%d",n);
+          if(n<=count){
+            printf("\nEnter seat numbers of your choice from the seat arrangement displayed above  ");
+            b.n=n;
+            b.m_id = s.m_id;
+            for(i=1; i<b.n ; i++){
+              scanf("%d",&b.seatno[i]);
+              updateseatmat(b,seatno[i]);
+            }
+            b.cost=calbookingprice(b.n , m.movieprice );
+            printf("\nTotal cost : %d",b.bcost);
+            printf("\nEnter User Details : ");
+            getu(&u);
+            b.u_id = u.user_id;
+            calb_id(&b.b_id);
+            getb(&b);
+            printf("Your Booking Id : %d",b.b_id);
+            printf("Your User Id    : %d",u.user_id);
+          }
+        }
+        else{
+          printf("No seat available ");
+        }
+      }
+      
+    }
+  }
+  fclose(fpm);
+}
+
+void updateBooking(){
+  clrscr();
+  heading(2);
+  struct booking b;
+  struct movie_seat_status s;
+  FILE *fpb,*tb;
+  int bid,n,sno[MAX],i,cost,j,k;
+  fpb=fopen("mbooking.txt","r");
+  tb=fopen("temp.txt","a");
+  if(fpb==NULL || tb==NULL)
+    notFile();
+  else{
+    printf("\nEnter booking id ");
+    scnaf("%d",&bid);
+    while(!feof(fpb)){
+      /*reading from the file */
+        fscanf(fpb,"\n%d %d %d",&b.b_id,&b.u_id,&b.m_id);
+      fscanf(fpb," %d %d %d",&b.d.d,&b.d.m,&b.d.y);
+      fscanf(fpb," %d %d",&b.t.h,&b.t.m);
+      fscanf(fpb," %d %d",&b.n,&b.bcost);
+      for(int i=0;i<b.n;i++){
+        fscanf(fpb,"%d",&b.seatno[i]);
+      }
+      
+      
+      if(b.b_id==bid){
+        s.d=b.d;
+        s.t=b.t;
+        s.m_i=b.m_id;
+        printf("\nEnter your choice :");
+        printf("\n1.Add a seat ");
+        printf("\n2.Delete a seat ");
+        scanf("%d",&ch);
+        switch(ch){
+          case 1 : seatmat(s);
+                   printf("Enter the number of seat you want to add : ");
+                   scanf("%d",&n);
+                   printf("\nEnter the seat no: ");
+                   for(i=1;i<=n;i++)
+                   {
+                     scanf("%d",&sno[i]);
+                     updateseatmat(b,sno[i]);
+                     b.seatno[b.n+i]=sno[i];
+                   }
+                   b.n+=n;
+                   cost=calbookingprice(n,(b.cost/n));
+                   b.cost+=cost;
+              break;
+          case 2 : printf("Your Booked Seat : ");
+                   for(i=0;i<b.n;i++){
+                     printf("%d ",b.seatno[i]);
+                   }
+                   printf("Enter the number of seat you want to delete : ");
+                   scanf("%d",&n);
+                   printf("\nEnter the seat no: ");
+                   for(i=1;i<=n;i++)
+                   {
+                     scanf("%d",&sno[i]);
+                     delseat(b,sno[i]);
+                     for(j=1;j<=b.n;j++)
+                     {
+                       if(b.seatno==sno)
+                       b.seatno[j]=0;
+                     }
+                   }
+                   for(j=1;j<=b.n;j++)
+                     {
+                       if(b.seatno==0){
+                         for(k=j;k<b.n ; k++)
+                         b.seatno[j]=b.seatno[j+1];
+                         b.n-=1;
+                         }
+                     }
+                   cost=calbookingprice(n,(b.cost/n));
+                   b.cost-=cost;
+              break;
+          default: inv();
+              break;
+        }
+      }
+        /* writing in another file */
+      fprintf(tb,"\n%d %d %d",b.b_id,b.u_id,b.m_id);
+      fprintf(tb," %d %d %d",b.d.d,b.d.m,b.d.y);
+      fprintf(tb," %d %d",b.t.h,b.t.m);
+      fprintf(tb," %d %d",b.n,b.bcost);
+      for(int i=0;i<b.n;i++){
+        fprintf(tb,"%d",b.seatno[i]);
+      }
+    }
+  }
+  fclose(fpb);
+  fclose(tb);
+  int r;
+  r=remove("mbooking.txt");
+  r=rename("temp.txt","mbooking.txt");
+}
+
+void delBooking(){
+  clrscr();
+  heading(2);
+  struct booking b;
+  struct user u;
+  int bid,uid;
+  FILE *fpb,*fpu,*tu,*tb;
+  fpb=fopen("mbooking.txt","r");
+  fpu=fopen("userdata.txt","r");
+  tb=fopen("tempbooking.txt","r");
+  tu=fopen("tempuserdata.txt","r");
+  if(fpu==NULL || fpb==NULL || tu==NULL || tb==NULL) 
+    notFile();
+  else{
+    printf("Enter the booking id : );
+    scanf("%d",&bid);
+    while(!feof(fpb)){
+      /* reading from the file */
+        fscanf(fpb,"\n%d %d %d",&b.b_id,&b.u_id,&b.m_id);
+        fscanf(fpb," %d %d %d",&b.d.d,&b.d.m,&b.d.y);
+        fscanf(fpb," %d %d",&b.t.h,&b.t.m);
+        fscanf(fpb," %d %d",&b.n,&b.bcost);
+        for(int i=0;i<b.n;i++){
+          fscanf(fpb,"%d",&b.seatno[i]);
+        }
+      
+      if(bid==b.b_id){
+        uid=b.u_id;
+        printf("\nRecord deleted ");
+        for(int i=0;i<b.n ;i++){
+          delseat(b,b.seatno[i]);
+        }
+      }
+      else{
+        /*writing in the file */
+        fprintf(tb,"\n%d %d %d",b.b_id,b.u_id,b.m_id);
+        fprintf(tb," %d %d %d",b.d.d,b.d.m,b.d.y);
+        fprintf(tb," %d %d",b.t.h,b.t.m);
+        fprintf(tb," %d %d",b.n,b.bcost);
+        for(int i=0;i<b.n;i++){
+          fprintf(tb,"%d",b.seatno[i]);
+        }
+      }
+    }
+    while(!feof(fpu)){
+      /* reading from the file */
+        fscanf(fpu,"\n%d",&u.user_id);
+        fgets(u.name,60,fpu);
+        fgets(u.email,80,fpu);
+        fgets(u.gender,1,fpu);
+        fscanf(fpu,"%d",&u.age);
+        for(int i=0;i<10;i++){
+          fscanf(fpu,"%d",&u.mobileno[i]);
+        }
+      if(u.user_id!=uid){
+        /* writing in the file */
+          fprintf(tu,"\n%d",u.user_id);
+          fputs(u.name,tu);
+          fputs(u.email,tu);
+          fputs(u.gender,tu);
+          fprintf(tu,"%d",u.age);
+          for(int i=0;i<10;i++){
+            fprintf(tu,"%d",u.mobileno[i]);
+          }
+        
+      }
+    }
+  }
+  fclose(fpb);
+  fclose(fpu);
+  fclose(tu);
+  fclose(tb);
+  int r;
+  r=remove("mbooking.txt");
+  r=rename("tempbooking.txt","mbooking.txt");
+  r=remove("userdata.txt");
+  r=rename("tempuserdata.txt","userdata.txt");
+}
+
+void ViewBooking(){
+  clrscr();
+  heading(2);
+  struct booking b;
+  struct movie m;
+  struct user u;
+  int bid,uid,mid;
+  FILE *fpb,*fpu,fpm;
+  fpb=fopen("mbooking.txt","r");
+  fpu=fopen("userdata.txt","r");
+  fpm=fopen("moviedata.txt","r");
+  if(fpm==NULL || fpb==NULL || fpu==NULL) 
+    notFile();
+  else{
+    printf("\nEnter the booking Id : ");
+    scanf("%d",&bid);
+    while(!feof(fpb)){
+      /* reading data from the booking file */
+      fscanf(fpb,"\n%d %d %d",&b.b_id,&b.u_id,&b.m_id);
+      fscanf(fpb," %d %d %d",&b.d.d,&b.d.m,&b.d.y);
+      fscanf(fpb," %d %d",&b.t.h,&b.t.m);
+      fscanf(fpb," %d %d",&b.n,&b.bcost);
+      for(int i=0;i<b.n;i++){
+        fscanf(fpb,"%d",&b.seatno[i]);
+      }
+      if(bid==b.b_id){
+        mid=b.m_id;
+        uid=b.u_id;
+        break;
+      }
+    }
+    while(!feof(fpm)){
+      /* reading from the movie file */
+      fscanf(fpm,"\n%d %d",&m.movie_id,&m.movie_price);
+      fscanf(fpm," %d %d %d ",&m.release.d,&m.release.m,&m.release.y);
+      fgets(m.movieName,150,fpm);fscanf(fpm,"\n");
+      fgets(m.language,80,fpm);fscanf(fpm,"\n");
+      fgets(m.mtype,80,fpm);
+      
+      if(mid==m.movie_id){
+        break;
+      }
+    }
+    while(!feof(fpu)){
+      /*reading from the user file */
+      fscanf(fpu,"\n%d",&u.user_id);
+      fgets(u.name,60,fpu);
+      fgets(u.email,80,fpu);
+      fgets(u.gender,1,fpu);
+      fscanf(fpu,"%d",&u.age);
+      for(int i=0;i<10;i++){
+        fscanf(fpu,"%d",&u.mobileno[i]);
+      }
+      
+      if(uid==u.user_id){
+        break;
+      }
+    }
+    printf("\n VIEWING BOOKING DETAILS : ");
+    printf("\nBooking for the Movie : ");
+    printM(m);
+    printf("\nBooking details : ");
+    printB(b);
+    printf("\nUser details : ");
+    printU(u);
+  }
+  fclose(fpm);
+  fclose(fpb);
+  fclose(fpu);
+}
+
+void viewAllMovie(){
+  viewAvailM();
+}
+
+
+/*seatmatrix functions */
+void seatmat(struct movie_seat_status t){
+  struct movie_seat_status s;
+  int j,k;
+  FILE *fps;
+  fps=fopen("movieSeat.txt","r");
+  if(fps==NULL) notFile();
+  else {
+    while(!feof(fps)){
+      fscanf(fps,"\n%d %d %d ",&s.s_id,&s.m_id,&s.count);
+      fscanf(fps,"%d %d %d ",&s.d.d,&s.d.m,&s.d.y);
+      fscanf(fps,"%d %d\n ",&s.t.h,&s.t.m);
+      for(j=0;j<10;j++){
+        for(k=0;k<10;k++){
+          fscanf(fps,"%d ",&s.seatm[j][k]);
+        }
+      }
+      
+      if(t.m_id==s.m_id && t.d.d == s.d.d && t.d.m == s.d.m && t.d.y == s.d.y && t.t.h == s.t.h && t.t.m == s.t.m ){
+        for(j=0;j<10;j++){
+          for(k=0;k<10;k++){
+            if(s.seatm[j][k]==1){
+              printf(" ");
+            }
+            else
+            {
+              printf(" %d%d",j,k);
+            }
+          }
+          printf("\n");
+        }
+      }
+    }
+  }
+  fclose(fps);
+}
+
+void initseatmat(struct movie m,int flag){
+  struct movie_seat_status s;
+  int i,j,k;
+  FILE *fps;
+  fps=fopen("movieSeat.txt","a");
+  if(fps==NULL) notFile();
+  else{
+      for(i=1;i<=3;i++){
+        s.m_id=m.movie_id;
+        s.s_id=((s.m_id*10)+flag)*10+i;
+        s.count=0;
+        for(j=0;j<10;j++){
+          for(k=0;k<10;k++){
+            s.seatm[i][j]=0;
+          }
+        }
+        s.d.d=m.release.d+flag;
+        s.d.m=m.release.m+flag;
+        s.d.y=m.release.y+flag;
+        switch(s.d.m){
+          case 1:
+          case 3:
+          case 5:
+          case 7:
+          case 8:
+          case 10:
+          case 12:
+            if(s.d.d>31)  
+            {
+              if(s.d.m==12){
+                s.d.d-=31;
+                s.d.m=1;
+                s.d.y+=1;
+              }
+              else{
+                s.d.d-=31;
+                s.d.m+=1;
+              }
+            }
+            break;
+          case 2:
+            if((s.d.y%4)==0){
+              if(s.d.d>29){
+                s.d.m+=1;
+                s.d.d-=29;
+              }
+            }
+            else{
+              if(s.d.d>28){
+                s.d.m+=1;
+                s.d.d-=28;
+              }
+            }
+            break;
+        default:
+          if(s.d.d>30){
+            s.d.d-=30;
+            s.d.m+=1;
+          }
+          break;
+        }
+        if(i==0){
+          s.t.m=0;
+          s.t.h=12; 
+        }
+        else
+        if(i==1){
+          s.t.m=0;
+          s.t.h=16; 
+        }
+        if(i==2){
+          s.t.m=0;
+          s.t.h=20; 
+        }
+        
+      /* saving data in file */
+        fprintf(fps,"\n%d %d %d ",s.s_id,s.m_id,s.count);
+        fprintf(fps,"%d %d %d ",s.d.d,s.d.m,s.d.y);
+        fprintf(fps,"%d %d\n ",s.t.h,s.t.m);
+        for(j=0;j<10;j++){
+          for(k=0;k<10;k++){
+            fprintf(fps,"%d ",s.seatm[j][k]);
+          }
+        }
+    }
+  }
+  fclose(fps);
+}
+
+void delseat(struct booking b,int sno){
+  struct  movie_seat_status s;
+  int j,k;
+  int m,n;
+  FILE *fps,*ts;
+  fps=fopen("movieSeat.txt ","r");
+  ts=fopen("temp.txt","a");
+  if(fps==NULL || ts==NULL) notFile();
+  else{
+    while(!feof(fps)){
+      fscanf(fps,"\n%d %d %d ",&s.s_id,&s.m_id,&s.count);
+      fscanf(fps,"%d %d %d ",&s.d.d,&s.d.m,&s.d.y);
+      fscanf(fps,"%d %d\n ",&s.t.h,&s.t.m);
+      for(j=1;j<=10;j++){
+        for(k=1;k<=10;k++){
+          fscanf(fps,"%d ",&s.seatm[j][k]);
+        }
+      }
+      
+      if(b.m_id==s.m_id && b.d.d == s.d.d && b.d.m == s.d.m && b.d.y == s.d.y && s.t.h == b.t.h && b.t.m == s.t.m ){
+        m=sno/10;
+        n=sno%10;
+        for(j=1;j<=10;j++){
+          for(k=1;k<=10;k++){
+            if(j==m && k==n){
+              s.seatm[j][k]=0;
+            }
+          }
+        }
+        s.count-=1;
+      }
+      fprintf(ts,"\n%d %d %d ",s.s_id,s.m_id,s.count);
+        fprintf(ts,"%d %d %d ",s.d.d,s.d.m,s.d.y);
+        fprintf(ts,"%d %d\n ",s.t.h,s.t.m);
+        for(j=0;j<10;j++){
+          for(k=0;k<10;k++){
+            fprintf(ts,"%d ",s.seatm[j][k]);
+          }
+        }
+    }
+  }
+  fclose(fps);
+  fclose(ts);
+  int r;
+  r=remove("movieSeat.txt");
+  r=rename("temp.txt","movieSeat.txt");
+}
+
+void updateseatmat(struct booking b,int sno){
+  struct  movie_seat_status s;
+  int j,k;
+  int m,n;
+  FILE *fps,*ts;
+  fps=fopen("movieSeat.txt ","r");
+  ts=fopen("temp.txt","a");
+  if(fps==NULL || ts==NULL) notFile();
+  else{
+    while(!feof(fps)){
+      fscanf(fps,"\n%d %d %d ",&s.s_id,&s.m_id,&s.count);
+      fscanf(fps,"%d %d %d ",&s.d.d, &s.d.m, &s.d.y);
+      fscanf(fps,"%d %d\n ",&s.t.h,&s.t.m);
+      for(j=1;j<=10;j++){
+        for(k=1;k<=10;k++){
+          fscanf(fps,"%d ",&s.seatm[j][k]);
+        }
+      }
+      
+      if(b.m_id == s.m_id && b.d.d == s.d.d && b.d.m == s.d.m && b.d.y == s.d.y  && b.t.h == s.t.h && b.t.m == s.t.m ){
+        m=sno/10;
+        n=sno%10;
+        for(j=1;j<=10;j++){
+          for(k=1;k<=10;k++){
+            if(j==m && k==n){
+              s.seatm[j][k]=1;
+            }
+          }
+        }
+        s.count+=1;
+      }
+      fprintf(ts,"\n%d %d %d ",s.s_id,s.m_id,s.count);
+        fprintf(ts,"%d %d %d ",s.d.d,s.d.m,s.d.y);
+        fprintf(ts,"%d %d\n ",s.t.h,s.t.m);
+        for(j=0;j<10;j++){
+          for(k=0;k<10;k++){
+            fprintf(ts,"%d ",s.seatm[j][k]);
+          }
+        }
+    }
+  }
+  fclose(fps);
+  fclose(ts);
+  int r;
+  r=remove("movieSeat.txt");
+  r=rename("temp.txt","movieSeat.txt");
+}
+
+void deleteseatmat(int mid)
+{
+  struct movie_seat_status s;
+  int j,k;
+  FILE *fps,*ts;
+  fps=fopen("movieSeat.txt","r");
+  ts=fopen("temp.txt","a");
+  if(fps==NULL) notFile();
+  else{
+    while(!feof(fps)){
+      fscanf(fps,"\n%d %d %d ",&s.s_id,&s.m_id,&s.count);
+      fscanf(fps,"%d %d %d ",&s.d.d,&s.d.m,&s.d.y);
+      fscanf(fps,"%d %d\n ",&s.t.h,&s.t.m);
+      for(j=0;j<10;j++){
+        for(k=0;k<10;k++){
+          fscanf(fps,"%d ",&s.seatm[j][k]);
+        }
+      }
+      
+      if(mid!=s.m_id){
+        fprintf(ts,"\n%d %d %d ",s.s_id,s.m_id,s.count);
+        fprintf(ts,"%d %d %d ",s.d.d,s.d.m,s.d.y);
+        fprintf(ts,"%d %d\n ",s.t.h,s.t.m);
+        for(j=0;j<10;j++){
+          for(k=0;k<10;k++){
+            fprintf(ts,"%d ",s.seatm[j][k]);
+          }
+        }
+      }
+    }
+  }
+  fclose(fps);
+  fclose(ts);
+  int r;
+  r=remove("movieSeat.txt");
+  r=rename("temp.txt","movieSeat.txt");
+}
+
+
+/* misc functions */
+void inv(){
+  printf("\n Invalid option ");
+}
+
+void endp(){
+  printf(" \nExiting from the system ");
+}
+
+void notfile(){
+  printf("\n\nFile Not Found !!!\n");
+}
+
+int calbookingprice(int seat,int price){
+  return (seat*price);
+}
+
+void calb_id(int *id){
+  int flag=0;
+  struct booking b;
+  FILE *fpb;
+  fpb=fopen("userdata.txt","r");
+  if(fpb==NULL){
+    notFile();
+    flag=2;
+  } 
+  else{
+    while(!(feof(fpb)))
+    {
+      fscanf(fpb,"\n%d %d %d",&b.b_id,&b.u_id,&b.m_id);
+      fscanf(fpb," %d %d %d",&b.d.d,&b.d.m,&b.d.y);
+      fscanf(fpb," %d %d",&b.t.h,&b.t.m);
+      fscanf(fpb," %d %d",&b.n,&b.bcost);
+      for(int i=0;i<b.n;i++){
+        fscanf(fpb,"%d",&b.seatno[i]);
+      }
+      flag=1;
+      *id=b.b_id;
+    }
+  }
+  if(flag==1)
+    *id+=1;
+  else 
+  if(flag==0) 
+    *id=0;
+}
+
+void caluser_id(int *id){
+  int flag=0;
+  struct user u;
+  FILE *fpu;
+  fpu=fopen("userdata.txt","r");
+  if(fpu==NULL){
+    notFile();
+    flag=2;
+  } 
+  else{
+    while(!(feof(fpu)))
+    {
+      fscanf(fpu,"\n%d",&u.user_id);
+      fgets(u.name,60,fpu);
+      fgets(u.email,80,fpu);
+      fgets(u.gender,1,fpu);
+      fscanf(fpu,"%d",&u.age);
+      for(int i=0;i<10;i++){
+        fscanf(fpu,"%d",&u.mobileno[i]);
+      }
+      flag=1;
+      *id=u.user_id;
+    }
+  }
+  if(flag==1)
+    *id+=1;
+  else 
+  if(flag==0) 
+    *id=0;
+}
+
+void printM(struct movie m){
+  printf("\n");
+  printf(" Movie Code         : %d \n ",m.movie_id);
+  printf(" Movie Name         : %d \n ",m.moviename);
+  printf(" Movie Price        : %d \n ",m.movie_price);
+  printf(" Movie Language     : %d \n ",m.language);
+  printf(" Movie Type         : %d \n ",m.mtype);
+  printf(" Movie Release Date : %d-%d-%d \n ",m.release.d,m.release.m,m.release.y);
+}
+
+void printB(struct booking b){
+  printf("\n");
+  printf(" Booking Id    : %d \n",b.b_id);
+  printf(" Ticket Date   : %d-%d-%d \n",b.d.d,b.d.m,b.d.y);
+  printf(" Ticket Time   : %d:%d \n",b.t.h,b.t.m);
+  printf(" Ticket Cost   : %d \n",b.bcost);
+  printf(" Total Seats   : %d\n ",b.n);
+  printf(" Seat Numbers  : ");
+  for(int i=0; i<b.n;i++)
+  printf(" %d ",b.seatno[i]);
+}
+
+void getb(struct booking *bt){
+  struct booking b;
+  b=*bt;
+  FILE *fpb;
+  fpb=fopen("mbooking.txt","a");
+  if(fpb==NULL) notFile();
+  else{
+    fprintf(fpb,"\n%d %d %d",b.b_id,b.u_id,b.m_id);
+      fprintf(fpb," %d %d %d",b.d.d,b.d.m,b.d.y);
+      fprintf(fpb," %d %d",b.t.h,b.t.m);
+      fprintf(fpb," %d %d",b.n,b.bcost);
+      for(int i=0;i<b.n;i++){
+        fprintf(fpb,"%d",b.seatno[i]);
+      }
+  }
+  fclose(fpb);
+}
+
+
+void getu(struct user *ut){
+  printf("\n");
+  printf("Enter you details ");
+  struct user u;
+  caluser_id(&u.user_id);
+  ut->user_id = u.user_id;
+  printf("\n Customer Id   : %d",ut->user_id);
+  printf("\n Name          : "); gets(ut->name);
+  printf("\n Email Id      : "); gets(ut->email);
+  printf("\n Gender        : "); gets(ut->gender);
+  printf("\n Mobile Number : ");scanf("%d",ut->mobileno);
+  printf("\n Age           : \n");scanf("%d",ut->age);
+  u=*ut;
+  FILE *fpu;
+  fpu=fopen("userdata.txt","a");
+  if(fpu==NULL) notFile();
+  else{
+    fprintf(fpu,"\n%d",u.user_id);
+      fputs(u.name,fpu);
+      fputs(u.email,fpu);
+      fputs(u.gender,fpu);
+      fprintf(fpu,"%d",u.age);
+      for(int i=0;i<10;i++){
+        fprintf(fpu,"%d",u.mobileno[i]);
+      }
+  }
+  fclose(fpu);
+}
+
+void printU(struct user u){
+  printf("\n");
+  printf("\n Customer Id   : %d ",u.user_id);
+  printf("\n Name          : "); puts(u.name);
+  printf("\n Email Id      : "); puts(u.email);
+  printf("\n Gender        : "); puts(u.name);
+  printf("\n Mobile Number : ");
+  for(int i=0;i<10;i++) printf("%d",u.mobileno[i]);
+  printf("\n Age           : %d \n",u.age); 
+}
+
+int printS(struct movie_seat_status s){
+  if(s.count<MAX){
+  printf("\n");
+  printf("\n Date                  : %d%d%d ",s.d.d,s.d.m,s.d.y);
+  printf("\n Time                  : %d : %d ",s.t.h,s.t.m);
+  printf("\n No. of seats available : %d ",(MAX-s.count));
+  return (MAX-s.count);
+  }
+  return 0;
+}
+
+int retCount(int mid){
+  struct movie_seat_status s;
+  int count=0,j,k;
+  FILE *fps;
+  fps=fopen("movieSeat.txt","r");
+  if(fps==NULL) notFile();
+  else{
+    while(!feof(fps)){
+      fscanf(fps,"\n%d %d %d ",&s.s_id,&s.m_id,&s.count);
+      fscanf(fps,"%d %d %d ",&s.d.d,&s.d.m,&s.d.y);
+      fscanf(fps,"%d %d\n ",&s.t.h,&s.t.m);
+      for(j=0;j<10;j++){
+        for(k=0;k<10;k++){
+          fscanf(fps,"%d ",&s.seatm[j][k]);
+        }
+      }
+      
+      if(mid==s.m_id){
+        count+=(MAX-s.count);
+        break;
+      }
+    }
+  }
+  fclose(fps);
+  return count;
+}
