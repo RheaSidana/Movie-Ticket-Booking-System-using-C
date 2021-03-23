@@ -12,7 +12,8 @@ void admin() {
         printf("1. Movie Details \n ");
         printf("2. Hall Details \n ");
         printf("3. User Details \n ");
-        printf("4. Exit \n ");
+        printf("4. Booking Details \n ");
+        printf("5. Exit \n ");
         scanf_s("%d", &ch);
         printf("\n");
         system("cls");
@@ -23,7 +24,9 @@ void admin() {
             break;
         case 3:UserFunctions();
             break;
-        case 4:endingProgram();
+        case 4:BookingOperations();
+            break;
+        case 5:endingProgram();
             exit(0);
             break;
         default: invalidOption();
@@ -31,7 +34,7 @@ void admin() {
             break;
         }
         int x = getchar();
-        printf("Do you want to continue: (y/n) ?");
+        printf("Do you want to continue (ADMIN FUNCTIONS) : (y/n) ?  ");
         scanf_s("%c", &ans,1);
         if (ans == 'n' || ans == 'N') break;
     } while (1);
@@ -39,6 +42,7 @@ void admin() {
 
 void MovieOperations() {
     int ch;
+    int x;
     char ans;
     do {
         system("cls");
@@ -61,11 +65,14 @@ void MovieOperations() {
             break;
         case 2: 
             heading(1);
+            x = getchar();
             viewMovie();
             break;
-        case 3: updateMovie();
+        case 3: x = getchar();
+            updateMovie();
             break;
-        case 4: deleteMovie();
+        case 4: x = getchar();
+            deleteMovie();
             break;
         case 5:viewAllMovie();
             break;
@@ -82,8 +89,8 @@ void MovieOperations() {
             int m = _getch();
             break;
         }
-        int x = getchar();
-        printf("Do you want to continue: (y/n) ?");
+        x = getchar();
+        printf("Do you want to continue (MOVIE FUNCTIONS): (y/n) ? ");
         scanf_s("%c", &ans, 1);
         if (ans == 'n' || ans == 'N') break;
     } while (1);
@@ -128,39 +135,7 @@ void HallOperations() {
             break;
         }
         int x = getchar();
-        printf("Do you want to continue: (y/n) ?");
-        scanf_s("%c", &ans, 1);
-        if (ans == 'n' || ans == 'N') break;
-    } while (1);
-}
-
-void UpdateHallOperations() {
-    int ch;
-    char ans;
-    do {
-        system("cls");
-        heading(1);
-        printf("\n\n Enter your choice : \n ");
-        printf("1. Allot a movie  \n ");
-        printf("2. Remove a movie  \n ");
-        printf("3. Exit \n ");
-        scanf_s("%d", &ch);
-        printf("\n");
-        system("cls");
-        switch (ch) {
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3: endingProgram();
-            exit(0);
-            break;
-        default: invalidOption();
-            int m = _getch();
-            break;
-        }
-        int x = getchar();
-        printf("Do you want to continue: (y/n) ?");
+        printf("Do you want to continue (HALL FUNCTIONS) : (y/n) ? ");
         scanf_s("%c", &ans, 1);
         if (ans == 'n' || ans == 'N') break;
     } while (1);
@@ -181,11 +156,11 @@ void UserFunctions() {
         printf("\n");
         system("cls");
         switch (ch) {
-        case 1:
+        case 1:viewMovieUser();
             break;
-        case 2:
+        case 2:findUser();
             break;
-        case 3:
+        case 3:callViewUserAllBookings();
             break;
         case 4: endingProgram();
             exit(0);
@@ -195,10 +170,45 @@ void UserFunctions() {
             break;
         }
         int x = getchar();
-        printf("Do you want to continue: (y/n) ?");
+        printf("Do you want to continue (USER FUNCTIONS) : (y/n) ? ");
         scanf_s("%c", &ans, 1);
         if (ans == 'n' || ans == 'N') break;
     } while (1);
 }
 
-//void BookingOperations(){}
+void BookingOperations(){
+    int ch;
+    char ans;
+    do {
+        system("cls");
+        printf("\n\n Enter your choice : \n ");
+        printf("1. View All Booking \n ");
+        printf("2. View User Booking  \n ");
+        printf("3. View Movie Booking Per Date \n ");
+        printf("4. View Hall Booking Per Date and Time  \n ");
+        printf("5. Exit \n ");
+        scanf_s("%d", &ch);
+        printf("\n");
+        system("cls");
+        switch (ch) {
+        case 1:viewAllBooking();
+            break;
+        case 2:callViewUserAllBookings();
+            break;
+        case 3:callViewMovieBookingDate();
+            break;
+        case 4:callViewHallBookingDateTime();
+            break;
+        case 5:endingProgram();
+            exit(0);
+            break;
+        default: invalidOption();
+            int m = _getch();
+            break;
+        }
+        int x = getchar();
+        printf("Do you want to continue (BOOKING FUNCTIONS) : (y/n) ?  ");
+        scanf_s("%c", &ans, 1);
+        if (ans == 'n' || ans == 'N') break;
+    } while (1);
+}

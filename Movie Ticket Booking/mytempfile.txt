@@ -1,3 +1,232 @@
+/* testing history */
+
+//start();
+
+	//testing first
+
+	//movie
+	//updateMovie();
+	//addMovie();
+	//viewAllMovie();
+	//viewMovie();
+	//deleteMovie();
+	//viewAllMovieHistory();
+
+	//hall
+	//addHall();
+	//viewHall();
+	//viewAllHall();
+	//viewAllAvailableHall();
+	//viewAllAvailableMovie();
+	//updateHall(); //not fully completed 
+	//deleteHall();  //not fully completed 
+	//viewMovieStatus();
+	//viewAvailableSeats();
+	//viewAvailableSeatHallMovie();
+
+	//user
+	//writeToUserFile(fpu, u);
+	//addUser(); 
+	//viewAllUser(); 
+	//findUser();
+	//struct user u = loginUser();
+	//updateUser();
+	//deleteUser();
+	//struct user u= loginOrRegisterUser();
+
+	//seat
+	//struct movie_seat mSeat = addSeat(hall_id, d, t);
+	/*
+	struct date d = { 9,3,2020 };
+	struct timings t = { 4,0 };
+	//viewAvailableSeats(110, 101, d);
+	/*
+	struct movie_seat seat[4];
+	int id = 21;
+	for (int i = 0; i < 4; i++) {
+		seat[i].seat_id = id;
+		id++;
+		seat[i].d = d;
+		seat[i].t = t;
+	}*/
+	/*
+	struct movie_seat seat[1];
+	int id = 21;
+		seat[0].seat_id = id;
+		seat[0].d = d;
+		seat[0].t = t;
+	printf("\n");
+	viewSeat(seat, 1);
+	*/
+	
+	/*
+	struct date d = { 9,3,2020 };
+	struct timings t = { 4,0 };
+	struct movie_seat seat[3];
+	//int id = 21;
+	seat[0].seat_id = 23;
+	seat[1].seat_id = 24;
+	seat[2].seat_id = 21;
+
+	seat[0].d = d; seat[1].d = d; seat[2].d = d;
+	seat[0].t = t; seat[1].t = t; seat[2].t = t;
+	/*
+	for (int i = 0; i < 4; i++) {
+		seat[i].seat_id = id;
+		id++;
+		seat[i].d = d;
+		seat[i].t = t;
+	}*/
+	//int n = 3;
+	/*
+	int val = SearchSeatNo(seat, &n, 23);
+	printf("\n Seat Found at %d", val);
+
+	struct movie_seat rmvSeat = seat[val];
+
+	removeSeat(seat, &n, val);
+	val = SearchSeatNo(seat, &n, 23);
+	printf("\n Seat Found at %d", val);
+
+	int hall_id = 110;
+	
+	updateSeatMatrixAfterDelete(rmvSeat, hall_id);
+	*/
+
+	//int hall_id = 110;
+	//deleteSeat(seat,&n,hall_id);
+	/*
+	sortSeatArray(seat, n);
+	for (int i = 0; i < 3; i++) {
+		printf("\n Seat id: %d", seat[i].seat_id);
+	}*/
+	
+	//booking 
+	/*
+	struct movie m;
+	m.movie_id = 0;
+	m = MovieBooking();
+	printf("\n Movie Selected \n");
+	displayMovie(m);
+	*/
+	/*
+	int mid = 105;
+	struct sub_hall sub[10];
+	sub[0].hall_id = 0;
+	int count=0;
+	viewAvailableHallOfMovie(mid,sub,&count);
+	
+	//printf("Count: %d", count);
+	int mcount = 0;
+	struct sub_hall subhall;
+	subhall.hall_id = 0;
+	struct movie_seat seat[15];
+	seat[0].seat_id = 0;
+	getHallForBooking(mid,&subhall);
+
+	getSeatBooked(&mcount,seat,subhall,mid);
+	printf("\n No Of Seats : %d", mcount);
+	*/
+	/*
+	struct timings t;
+	t.h = 0;
+	struct date d;
+	d.d = 0;
+	calDateTime(&t,&d);*/
+	/*
+struct booking b;
+b.booking_id = 0;
+generateBookingID(&b);
+printf("\n Booking id : %d", b.booking_id);
+	*/
+/*
+struct booking b;
+b.booking_id = 0;
+b = getBooking(3);
+displayBooking(b);
+*/
+/*3 47 F 9099083327
+Sonu Sidana
+sonu@gmail.com*/
+
+/*
+struct user u;
+//u.name = "Sonu Sidana";
+u.user_id = 3;
+u.age = 47;
+u.gender = 'F';
+//u.mobileno[10]= { 9,0,9,9,0,8,3,3,2,7 };
+addBooking(u);
+*/
+
+//viewAllBooking();
+/*
+struct user u;
+//u.name = "Sonu Sidana";
+u.user_id = 3;
+viewUserAllBookings(u);
+*/
+
+/*
+struct user u;
+//u.name = "Sonu Sidana";
+u.user_id = 3;
+viewBooking(u);
+*/
+
+//Booking id : 1-105-120-5
+/*
+struct user u;
+u.user_id = 5;
+updateBooking(u);
+*/
+/*
+struct user u;
+u.user_id = 3;
+deleteBooking(u);
+viewAllBooking();
+*/
+
+//viewMovieUser();
+//findUser();
+//viewUserBooking();
+
+/*
+struct hall h;
+h.hall_id = 120;
+h.d.d = 10; h.d.m = 3;h.d.y= 2020;
+//h.t.h = 10; h.t.m = 0;
+int now = 130;
+updateHallId_Bookings(h,now);
+*/
+// 2-101-130-3
+//updateHall();
+//deleteHall();
+//viewAllBooking();
+
+/*
+    struct date d = { 10,3,2020 };
+	int mid = 105;
+	viewMovieBookingDate(mid,d);
+*/
+
+/*
+    struct date d = { 10,3,2020 };
+	int hid = 130;
+	struct timings t = { 4,0 };
+	viewHallBookingDateTime(hid,d,t);
+*/
+
+
+
+
+
+
+
+
+
+
+
 /* Movie Ticket Booking System */
 #include <conio.h>
 #include <stdio.h>
@@ -84,9 +313,9 @@ void printM(struct movie m);                //print movie details               
 void printB(struct booking b);              //print booking details                                 //
 void printU(struct user u);                 //print user details                                    //
  int retCount(int mid);                     //return total seat count available of the movie        //done
-void getu(struct user *ut);                 //writing user details in the file                      //
+void getu(struct user *ut);                 //writing user details in the file                      //done
 void getb(struct booking *bt);              //writing booking data in the file                      //
-int printS(struct movie_seat_status s);     //print the movie seat status and returns count         //
+int printS(struct movie_seat_status s);     //print the movie seat status and returns count         //done
 
 int main(){
   clrscr();

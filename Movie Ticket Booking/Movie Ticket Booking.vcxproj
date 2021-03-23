@@ -149,6 +149,7 @@
     <ClCompile Include="MiscFunc.c" />
     <ClCompile Include="Movie.c" />
     <ClCompile Include="Customer.c" />
+    <ClCompile Include="Seat.c" />
     <ClCompile Include="User.c" />
     <ClCompile Include="UserType.c" />
   </ItemGroup>

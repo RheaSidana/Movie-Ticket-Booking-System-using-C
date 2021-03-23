@@ -241,19 +241,22 @@ void updateMovie() {
                 displayMovie(m);
 
                 //updating log file 
-                if (history != NULL || th != NULL) {
                     while (!(feof(history))) {
                         struct movie to = readMovieFromFile(history);
                         if ((strcmp(name, to.movieName)) == 0)
                         {
                             printf("\nFound in history");
                             displayMovie(to);
-                            to = m;
+                            to.movie_id=m.movie_id;
+                            to.release = m.release;
+                            to.movie_price = m.movie_price;
+                            strcpy(to.language, m.language);
+                            strcpy(to.movieName, m.movieName);
+                            strcpy(to.mtype, m.mtype);
                             displayMovie(to);
                         }
                         writeToFile(th, to);
                     }
-                }
             }
             writeToFile(tm, m);
         }
@@ -299,6 +302,7 @@ void viewAllAvailableMovie() {
             struct movie m = readMovieFromFile(fpm);
             int count = totalAvailableSeatsOfMovie(m.movie_id);
             if ((count != 0) && (count != -1)) {
+                printf("\n Movie ID    : %d ",m.movie_id);
                 printf("\n Movie Name  : %s \n Available   : %d \n", m.movieName, count);
             }
         }
@@ -328,3 +332,33 @@ void viewMovieStatus() {
     }
     fclose(fpm);
 }
+
+struct movie getMovieIdForBooking() {
+    viewAllAvailableMovie();
+    struct movie m;
+    int m_id = 0, flag = 0;
+    printf("\n Enter the Movie ID : ");
+    scanf_s("%d", &m_id);
+    FILE* fpm;
+    fpm = fopen("moviedata.txt", "r");
+    if (fpm == NULL) fileNotFound();
+    else {
+        while (!feof(fpm)) {
+            m = readMovieFromFile(fpm);
+            int count = totalAvailableSeatsOfMovie(m.movie_id);
+            if ((count != 0) && (count != -1)) {
+                if (m_id == m.movie_id) {
+                    flag = 1;
+                    break;
+                }
+            }
+        }
+    }
+    fclose(fpm);
+    if (flag == 0) {
+        printf("\n Invalid Movie id ");
+        m.movie_id=m_id = 0;
+    }
+    return m;
+}
+

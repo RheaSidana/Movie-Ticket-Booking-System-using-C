@@ -19,38 +19,6 @@ void start() {
 }
 
 int main() {
-	//start();
-
-	//testing first
-
-	//movie
-	//updateMovie();
-	//addMovie();
-	//viewAllMovie();
-	//viewMovie();
-	//deleteMovie();
-	//viewAllMovieHistory();
-
-	//hall
-	//addHall();
-	//viewHall();
-	//viewAllHall();
-	//viewAllAvailableHall();
-	//viewAllAvailableMovie();
-	//updateHall(); //not fully completed 
-	//deleteHall();  //not fully completed 
-	//viewMovieStatus();
-	//viewAvailableSeats();
-	//viewAvailableSeatHallMovie();
-
-	//user
-	//writeToUserFile(fpu, u);
-	//addUser(); 
-	//viewAllUser(); 
-	//findUser();
-	//struct user u = loginUser();
-	//updateUser();
-	//deleteUser();
-	struct user u= loginOrRegisterUser();
-
+	start();
+return 0;
 }

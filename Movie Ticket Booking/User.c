@@ -70,7 +70,7 @@ struct user readFromUserFile(FILE* fpu) {
 }
 
 struct user addUser() {
-	int id;
+	//int id;
 	struct user u;
 	u.user_id = 0;
 	FILE* fpu;
@@ -113,38 +113,99 @@ void viewAllUser() {
 }
 
 void viewMovieUser() {
-
+	int mid;
+	printf("\n Enter the movie id : ");
+	scanf_s("%d", &mid);
+	struct movie m; m.movie_id = 0;
+	m = findMovieById(mid);
+	if (m.movie_id != 0) {
+		struct user u;
+		u.user_id = 0;
+		struct booking b;
+		int flag = 0;
+		FILE* fpb;
+		fpb = fopen("Booking.txt", "r");
+		if (fpb == NULL) fileNotFound();
+		else {
+			while (!feof(fpb)) {
+				b = readFromBookingFile(fpb);
+				if (b.movie_id == mid)
+				{
+					flag = 1;
+					u = findUserById(b.user_id);
+					if (u.user_id != 0) {
+						displayUser(u);
+					}
+					//break;
+				}
+			}
+		}
+		if (flag == 0) {
+			printf("Booking Not Found ");
+		}
+		fclose(fpb);
+	}
 }
 
 void findUser() {
 	heading(1);
-	printf("\n Displaying the user: \n");
+	printf("\nFinding the user: \n");
 	int flag = 0;
-	FILE* fpu;
-	fpu = fopen("userData.txt", "r");
-	if (fpu == NULL) fileNotFound();
-	else {
-		int id; 
-		printf("Enter the User ID : ");
-		scanf_s("%d", &id);
-		struct user u;
-		while (!(feof(fpu))) {
-			u = readFromUserFile(fpu);
-			if (u.user_id == id) {
-				flag = 1;
-				displayUser(u);
-				break;
-			}
-		}
+
+	int id;
+	printf("Enter the User ID : ");
+	scanf_s("%d", &id);
+	struct user u;
+	u.user_id = 0;
+	u = findUserById(id);
+	if (u.user_id != 0) {
+		flag = 1;
+		displayUser(u);
 	}
 	if (flag == 0) {
 		printf("\n User not found");
 	}
-	fclose(fpu);
+	
+}
+
+struct user findUserById(int id) {
+	struct user u;
+	u.user_id = 0;
+	
+	FILE* fpu;
+	fpu = fopen("userData.txt", "r");
+	if (fpu == NULL)fileNotFound();
+	else {
+		while (!feof(fpu)) {
+			u = readFromUserFile(fpu);
+			if (u.user_id == id) {
+				break;
+			}
+		}
+	}
+
+	return u;
 }
 
 void viewUserBooking() {
+	heading(1);
+	printf("\n Displaying the user: \n");
+	int flag = 0;
 
+	int id;
+	printf("Enter the User ID : ");
+	scanf_s("%d", &id);
+	struct user u;
+	u.user_id = 0;
+	u = findUserById(id);
+	if (u.user_id != 0) {
+		flag = 1;
+		displayUser(u);
+		viewUserAllBookings(u);
+	}
+	if (flag == 0) {
+		printf("\n User not found");
+	}
 }
 
 int isUser(struct user *u) {
