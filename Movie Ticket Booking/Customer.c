@@ -35,7 +35,7 @@ struct user loginOrRegisterUser() {
 }
 
 void customer() {
-    int ch;
+    int ch,x;
     char ans;
     struct user u;
     u.user_id = 0;
@@ -56,33 +56,32 @@ void customer() {
         printf("\n");
         system("cls");
         switch (ch) {
-        case 1:
+        case 1:x = getchar();
             heading(1);
             viewMovie();
             break;
         case 2:
             if (u.user_id == 0)
                 u = loginOrRegisterUser();
-            else
-                addBooking();
+            addBooking(u);
             break;
         case 3:
             if (u.user_id == 0)
                 u = loginOrRegisterUser();
-            else
-                updateBooking();
+            x = getchar();
+            updateBooking(u);
             break;
         case 4:
             if (u.user_id == 0)
                 u = loginOrRegisterUser();
-            else
-                deleteBooking();
+            x = getchar();
+            deleteBooking(u);
             break;
         case 5:
             if (u.user_id == 0)
                 u = loginOrRegisterUser();
-            else
-                viewBooking();
+            x = getchar();
+            viewBooking(u);
             break;
         case 6:
             heading(2);
@@ -91,8 +90,7 @@ void customer() {
         case 7:
             if (u.user_id == 0)
                 u = loginOrRegisterUser();
-            else
-                viewAllBooking();
+            viewUserAllBookings(u);
             break;
         case 8:endingProgram();
             exit(0);
@@ -101,8 +99,8 @@ void customer() {
             int m = _getch();
             break;
         }
-        int x = getchar();
-        printf("Do you want to continue: (y/n) ?");
+        x = getchar();
+        printf("Do you want to continue (CUSTOMER FUNCTIONS): (y/n) ?");
         scanf_s("%c", &ans,1);
         if (ans == 'n' || ans == 'N') break;
     } while (1);

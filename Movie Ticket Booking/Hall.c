@@ -77,7 +77,8 @@ void writeToHallFile(FILE* fph, struct hall h) {
 		}
 		fprintf(fph, "\n");
 	}
-	fprintf(fph, "%d %d %d %d %d %d %d %d \n",h.t1.h,h.t1.m, h.t2.h, h.t2.m, h.t3.h, h.t3.m, h.t4.h, h.t4.m);
+	fprintf(fph, "%d %d %d %d %d %d %d %d ",h.t1.h,h.t1.m, h.t2.h, h.t2.m, h.t3.h, h.t3.m, h.t4.h, h.t4.m);
+	fprintf(fph,"\n");
 }
 
 struct hall readHallFromFile(FILE* fph) {
@@ -110,7 +111,8 @@ struct hall readHallFromFile(FILE* fph) {
 		}
 		fscanf(fph, "\n");
 	}
-	fscanf(fph, "\n%d %d %d %d %d %d %d %d \n", &h.t1.h, &h.t1.m, &h.t2.h, &h.t2.m, &h.t3.h, &h.t3.m, &h.t4.h, &h.t4.m);
+	fscanf(fph, "\n%d %d %d %d %d %d %d %d ", &h.t1.h, &h.t1.m, &h.t2.h, &h.t2.m, &h.t3.h, &h.t3.m, &h.t4.h, &h.t4.m);
+	fscanf(fph,"\n");
 	return h;
 }
 
@@ -141,59 +143,12 @@ void displayAvailableMovieHall(struct hall h) {
 	if (h.s4.count != 0) {
 		printf("\n    d. %02d : %02d - %02d : %02d \tMovie Id: %d", h.t4.h, h.t4.m, h.t4.h + 3, h.t4.m, h.m4);
 		printf("\tAvailable Seats: %d   ", h.s4.count);
-		m = findMovieById(h.m2);
+		m = findMovieById(h.m4);
 		printf(" Movie Name   : %s ", m.movieName);
 	} 
 	printf("\n");
 }
 
-int totalAvailableSeatsOfMovie(int movie_id) {
-	int count = -1;
-	FILE* fph;
-	fph = fopen("HallData.txt", "r");
-	if (fph == NULL) fileNotFound();
-	else {
-		while (!feof(fph)) {
-			struct hall h = readHallFromFile(fph);
-			if (h.m1 == movie_id) {
-				if (count == -1)count = h.s1.count;
-				else count+= h.s1.count;
-			}
-			if (h.m2 == movie_id) {
-				if (count == -1)count = h.s2.count;
-				else count += h.s2.count;
-			}
-			if (h.m3 == movie_id) {
-				if (count == -1)count = h.s3.count;
-				else count+= h.s3.count;
-			}
-			if (h.m4 == movie_id) {
-				if (count == -1)count = h.s4.count;
-				else count+= h.s4.count;
-			}
-		}
-	}
-	fclose(fph);
-	return count;
-}
-
-void viewSeatingArrangment(int mat[3][5]) {
-	printf("\n  Available Seats are stared n* : \n");
-	int i, j, row, col;
-	for (i = 0; i < 3; i++) {
-		for (j = 0; j < 5; j++) {
-			row = i + 1;
-			col = j + 1;
-			if (mat[i][j] != 0){
-				printf("   %d%d   ", row, col);
-			}
-			else {
-				printf("   %d%d*  " , row, col);
-			}
-		}
-		printf("\n");
-	}
-}
 
 void addHall() {
 	system("cls");
@@ -283,7 +238,7 @@ void updateHall() {
 			struct hall h = readHallFromFile(fph);
 			if (h.hall_id == id) {
 				flag = 1;
-				//int val;
+				int val;
 				displayHall(h);
 				printf("\n\n Enter your choice : (HALL)\n ");
 				printf("1.ID \n 2.Movie_ID 1 \n 3.Movie_ID 2 \n 4.Movie_ID 3 \n 5.Movie_ID 4 \n 6.Date \n ");
@@ -291,31 +246,43 @@ void updateHall() {
 				switch (ch) {
 				case 1:
 					printf("\n Enter the new ID: ");
-					scanf_s("%d", &h.hall_id);
+					scanf_s("%d", &val);
+					//update in all bookings 
+					updateHallId_Bookings(h, val);
+					h.hall_id = val;
 					break;
 				case 2:
 					printf("\n Enter the new Movie_ID 1: ");
 					scanf_s("%d", &h.m1);
 					//refund to users 
+					refundOfBookings(h.hall_id, h.d, h.t1,&h);
 					break;
 				case 3: 
 					printf("\n Enter the new Movie_ID 2: ");
 					scanf_s("%d", &h.m2);
 					//refund to users 
+					refundOfBookings(h.hall_id, h.d, h.t2,&h);
 					break;
 				case 4: 
 					printf("\n Enter the new Movie_ID 3: ");
 					scanf_s("%d", &h.m3);
 					//refund to users 
+					refundOfBookings(h.hall_id, h.d, h.t3,&h);
 					break;
 				case 5: 
 					printf("\n Enter the new Movie_ID 4: ");
 					scanf_s("%d", &h.m4);
 					//refund to users 
+					refundOfBookings(h.hall_id, h.d, h.t4,&h);
 					break;
 				case 6: 
 					printf("\n Enter the new Date: ");
 					scanf_s("%d%d%d", &h.d.d,&h.d.m,&h.d.y);
+					//refund to users
+					refundOfBookings(h.hall_id, h.d, h.t1,&h);
+					refundOfBookings(h.hall_id, h.d, h.t2,&h);
+					refundOfBookings(h.hall_id, h.d, h.t3,&h);
+					refundOfBookings(h.hall_id, h.d, h.t4,&h);
 					break;
 				default: invalidOption();
 					break;
@@ -345,20 +312,31 @@ void deleteHall() {
 	if (fph == NULL || tm == NULL) fileNotFound();
 	else {
 		int id;
-		printf("\n Enter the hall id you want to update : ");
+		char ans;
+		printf("\n Enter the hall id you want to delete : ");
 		scanf_s("%d", &id);
-		while (!(feof(fph))) {
-			struct hall h = readHallFromFile(fph);
-			if (h.hall_id == id) {
-				flag = 1;
-				displayHall(h);
-				//refund all the useers who booked the movies in this hall
-				printf("\n Hall Deleted\n");
-			}
-			else {
-				writeToHallFile(tm, h);
+		int x = getchar();
+		printf("\n Are you sure you want to delete the hall?(y/n) ");
+		scanf_s("%c", &ans, 1);
+		if (ans == 'y' || ans == 'Y') {
+			while (!(feof(fph))) {
+				struct hall h = readHallFromFile(fph);
+				if (h.hall_id == id) {
+					flag = 1;
+					displayHall(h);
+					//refund all the users who booked the movies in this hall
+					refundOfBookings(h.hall_id, h.d, h.t1, &h);
+					refundOfBookings(h.hall_id, h.d, h.t2, &h);
+					refundOfBookings(h.hall_id, h.d, h.t3, &h);
+					refundOfBookings(h.hall_id, h.d, h.t4, &h);
+					printf("\n Hall Deleted\n");
+				}
+				else {
+					writeToHallFile(tm, h);
+				}
 			}
 		}
+		else flag = 1;
 	}
 	fclose(fph);
 	fclose(tm);
@@ -370,8 +348,27 @@ void deleteHall() {
 	r = rename("temporary.txt", "HallData.txt");
 }
 
-void viewAvailableSeats(int h_id,int m_id,struct date d) {
-	printf("\n Printing the Hall Details ");
+void displayAvailableHallMovie(struct timings t,int count,struct date d) {
+	int to = t.h + 3;
+	if (to > 12)to -= 12;
+	//printf("\n Hall Id           : %d ", hall_id);
+	printf(" Date   : %d-%d-%d \t", d.d,d.m,d.y);
+	printf("Timings : %02d:%02d - %02d:%02d \t", t.h,t.m,to,t.m);
+	printf("Available Seats : %d \n", count);
+}
+
+struct sub_hall assignHallToSubHall(int hid,int mid,struct date d,struct timings t, struct seating_arrangement s) {
+	struct sub_hall subhall;
+	subhall.hall_id = hid;
+	subhall.mid = mid;
+	subhall.d = d;
+	subhall.s = s;
+	subhall.t = t;
+	return subhall;
+}
+
+void viewAvailableHallOfMovie(int mid,struct sub_hall subhall[10],int *count) {
+	int flag = 0, timeCount = 0;
 	FILE* fph;
 	fph = fopen("HallData.txt", "r");
 	if (fph == NULL) fileNotFound();
@@ -379,67 +376,104 @@ void viewAvailableSeats(int h_id,int m_id,struct date d) {
 		struct hall h;
 		while (!feof(fph)) {
 			h = readHallFromFile(fph);
-			if (h.hall_id == h_id) {
-				int count=0;
-				int t=0;
-				if (h.m1 == m_id) { 
-					count++; 
-					t = 1; 
-					printf("\n  1. Timing : %02d:%02d-%02d:%02d",h.t1.h,h.t1.m, h.t2.h, h.t2.m);
+			if (h.s1.count != 0 || h.s2.count != 0 || h.s3.count != 0 || h.s4.count != 0) {
+				if (h.m1 == mid) {
+					subhall[*count]=assignHallToSubHall(h.hall_id,mid,h.d,h.t1,h.s1);
+					*count+=1;
+					printf("\n %d", *count);
+					displayAvailableHallMovie( h.t1, h.s1.count,h.d);
+					flag = 1;
+					if (*count == 10)break;
 				}
-				if (h.m2 == m_id) {
-					count++; 
-					t = 2;
-					printf("\n  2. Timing : %02d:%02d-%02d:%02d", h.t2.h, h.t2.m, h.t3.h, h.t3.m);
+				if (h.m2 == mid) {
+					subhall[*count] = assignHallToSubHall(h.hall_id, mid, h.d, h.t2, h.s2);
+					*count+=1;
+					printf("\n %d", *count);
+					displayAvailableHallMovie( h.t2, h.s2.count, h.d);
+					flag = 1;
+					if (*count == 10)break;
 				}
-				if (h.m3 == m_id) {
-					count++; 
-					t = 3; 
-					printf("\n  3. Timing : %02d:%02d-%02d:%02d", h.t3.h, h.t3.m, h.t4.h, h.t4.m);
+				if (h.m3 == mid) {
+					subhall[*count] = assignHallToSubHall(h.hall_id, mid, h.d, h.t3, h.s3);
+					*count+=1;
+					printf("\n %d", *count);
+					displayAvailableHallMovie( h.t3, h.s3.count, h.d);
+					flag = 1;
+					if (*count == 10)break;
 				}
-				if (h.m4 == m_id) {
-					count++; 
-					t = 4; 
-					printf("\n  4. Timing : %02d:%02d-%02d:%02d", h.t4.h, h.t4.m, h.t4.h+3, h.t4.m);
+				if (h.m4 == mid) {
+					subhall[*count] = assignHallToSubHall(h.hall_id, mid, h.d, h.t4, h.s4);
+					*count+=1;
+					printf("\n %d", *count);
+					displayAvailableHallMovie( h.t4, h.s4.count, h.d);
+					flag = 1;
+					if (*count == 10)break;
 				}
-				if (count > 1) {
-					printf("\n\n  Enter the timing number : ");
-					scanf_s("%d", &t);
-				}
-				if (t >= 1 && t <= 4) {
-					if (t == 1) {
-						printf("\n  Total Seats Available : %d", h.s1.count);
-						viewSeatingArrangment(h.s1.mat);
-					}
-					else if (t == 2) {
-						printf("\n  Total Seats Available : %d", h.s2.count);
-						viewSeatingArrangment(h.s2.mat);
-					}
-					else if (t == 3) {
-						printf("\n  Total Seats Available : %d", h.s3.count);
-						viewSeatingArrangment(h.s3.mat);
-					}
-					else if (t == 4) {
-						printf("\n  Total Seats Available : %d", h.s4.count);
-						viewSeatingArrangment(h.s4.mat);
-					}
-				}
-				else invalidOption();
 			}
 		}
 	}
 	fclose(fph);
+	if (flag == 0) {
+		printf("\n No Hall Available.");
+	}
+	//return subhall;
 }
 
-void viewAvailableSeatHallMovie() {
-	int h_id, m_id;
-	struct date d;
-	printf("\n Enter the Hall ID : ");
-	scanf_s("%d", &h_id);
-	printf("\n Enter the Movie ID : ");
-	scanf_s("%d", &m_id);
-	printf("\n Enter the date : ");
-	scanf_s("%d%d%d", &d.d, &d.m, &d.y);
-	viewAvailableSeats(h_id, m_id, d);
+void getHallForBooking(int mid,struct sub_hall *subhall) {
+	struct sub_hall sub[10];
+	sub[0].hall_id = 0;
+	int id;
+	do {
+		system("cls");
+		int count = 0;
+		viewAvailableHallOfMovie(mid, sub, &count);
+		printf("\n Enter the option to book the ticket of your choice in the hall : ");
+		scanf_s("%d",&id);
+		if (id >= 1 && id <= count) {
+			id--;
+			printf(" \n Hall No : %d", sub[id].hall_id);
+			*subhall = sub[id];
+			//
+			break;
+		}
+		else {
+			printf("\n Enter the correct option.");
+			int x = _getch();
+		}
+	} while (1);
+}
+
+struct seating_arrangement assignSeatingArrangement(int hid, int mid, struct date d, struct timings t) {
+	struct seating_arrangement s;
+	s.count = 0;
+	FILE* fph;
+	fph = fopen("HallData.txt", "r");
+	if (fph == NULL) fileNotFound();
+	else {
+		struct hall h;
+		while (!feof(fph)) {
+			h = readHallFromFile(fph);
+			if (h.hall_id == hid && h.d.d == d.d && h.d.m == d.m && h.d.y == d.y) {
+				if (h.t1.h == t.h && h.m1 == mid) {
+					s=h.s1;
+					break;
+				}
+				else if (h.t2.h == t.h && h.m2 == mid) {
+					s=h.s2;
+					break;
+				}
+				else if (h.t3.h == t.h && h.m3 == mid) {
+					s=h.s3;
+					break;
+				}
+				else if (h.t4.h == t.h && h.m4 == mid) {
+					s=h.s4;
+					break;
+				}
+			}
+		}
+	}
+	fclose(fph);
+	return s;
 }
 
